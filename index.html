@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hỏi đáp Trợ lý ảo</title>
+<style>
+    /* CSS styles here */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    .chat-container {
+        max-width: 400px;
+        margin: 20px auto;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+    .chat-header {
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px;
+        text-align: center;
+    }
+    .chat-messages {
+        max-height: 300px;
+        overflow-y: auto;
+        padding: 10px;
+    }
+    .message {
+        margin-bottom: 10px;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+    .message.sender {
+        background-color: #007bff;
+        color: #fff;
+        text-align: right;
+    }
+    .message.receiver {
+        background-color: #f0f0f0;
+        color: #000;
+        text-align: left;
+    }
+    .message-input {
+        display: flex;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
+    .message-input input[type="text"] {
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+    }
+    .message-input input[type="submit"] {
+        padding: 8px 15px;
+        margin-left: 10px;
+        background-color: #007bff;
+        border: none;
+        border-radius: 3px;
+        color: #fff;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+<div class="chat-container">
+    <div class="chat-header">
+       Hỏi đáp với Trợ lý ảo
+    </div>
+    <div class="chat-messages" id="chatMessages">
+        <!-- Chat messages will be inserted here -->
+    </div>
+    <div class="message-input">
+        <input type="text" id="messageInput" placeholder="Type your message...">
+        <input type="submit" value="Send" onclick="sendMessage()">
+    </div>
+</div>
+
+<!-- Embedding Coze bot -->
+<script src="https://sf-cdn.coze.com/obj/unpkg-va/flow-platform/chat-app-sdk/0.1.0-beta.2/libs/oversea/index.js"></script>
+<script>
+    new CozeWebSDK.WebChatClient({
+        config: {
+            bot_id: '7347935645614063618',
+        },
+        componentProps: {
+            title: 'Coze',
+        },
+    });
+
+    function sendMessage() {
+        var messageInput = document.getElementById('messageInput');
+        var message = messageInput.value.trim();
+        if (message !== '') {
+            appendMessage('sender', message);
+            // Simulate receiving a response after a short delay
+            setTimeout(function() {
+                autoReply(message);
+            }, 1000);
+            messageInput.value = '';
+        }
+    }
+
+    function autoReply(message) {
+        // Simulate auto-reply message from Coze bot
+        var replyMessage = 'This is an auto-reply from Coze bot. You said: ' + message;
+        appendMessage('receiver', replyMessage);
+    }
+
+    function appendMessage(sender, message) {
+        var chatMessages = document.getElementById('chatMessages');
+        var messageDiv = document.createElement('div');
+        messageDiv.textContent = message;
+        messageDiv.classList.add('message', sender);
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+</script>
+</body>
+</html>
