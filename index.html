@@ -3,121 +3,126 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hỏi đáp Trợ lý ảo</title>
+<title>iMessenger-style Coze Bot Chat</title>
 <style>
     /* CSS styles here */
     body {
         font-family: Arial, sans-serif;
         margin: 0;
         padding: 0;
+        background-color: #f4f4f4;
     }
     .chat-container {
         max-width: 400px;
         margin: 20px auto;
         border: 1px solid #ccc;
-        border-radius: 5px;
+        border-radius: 10px;
         overflow: hidden;
     }
-    .chat-header {
-        background-color: #007bff;
-        color: #fff;
-        padding: 10px;
-        text-align: center;
-    }
     .chat-messages {
-        max-height: 300px;
+        max-height: 400px;
         overflow-y: auto;
         padding: 10px;
     }
     .message {
         margin-bottom: 10px;
-        padding: 5px 10px;
-        border-radius: 5px;
+        padding: 10px;
+        border-radius: 10px;
+        display: inline-block;
+        max-width: 75%;
     }
     .message.sender {
-        background-color: #007bff;
-        color: #fff;
+        background-color: #d1f1ff;
+        color: #000;
         text-align: right;
+        float: right;
     }
     .message.receiver {
         background-color: #f0f0f0;
         color: #000;
         text-align: left;
+        float: left;
     }
     .message-input {
         display: flex;
         padding: 10px;
-        background-color: #f9f9f9;
+        background-color: #fff;
     }
     .message-input input[type="text"] {
         flex: 1;
-        padding: 8px;
+        padding: 10px;
         border: 1px solid #ccc;
-        border-radius: 3px;
+        border-radius: 5px;
+        font-size: 14px;
     }
     .message-input input[type="submit"] {
-        padding: 8px 15px;
+        padding: 10px;
         margin-left: 10px;
         background-color: #007bff;
         border: none;
-        border-radius: 3px;
+        border-radius: 5px;
         color: #fff;
         cursor: pointer;
+        font-size: 14px;
     }
 </style>
 </head>
 <body>
 <div class="chat-container">
-    <div class="chat-header">
-       Hỏi đáp với Trợ lý ảo
-    </div>
-    <div class="chat-messages" id="chatMessages">
-        <!-- Chat messages will be inserted here -->
-    </div>
+    <div class="chat-messages" id="chatMessages"></div>
     <div class="message-input">
         <input type="text" id="messageInput" placeholder="Type your message...">
         <input type="submit" value="Send" onclick="sendMessage()">
     </div>
 </div>
 
-<!-- Embedding Coze bot -->
+<!-- Embedding Coze bot script -->
 <script src="https://sf-cdn.coze.com/obj/unpkg-va/flow-platform/chat-app-sdk/0.1.0-beta.2/libs/oversea/index.js"></script>
 <script>
-    new CozeWebSDK.WebChatClient({
-        config: {
-            bot_id: '7347935645614063618',
-        },
-        componentProps: {
-            title: 'Coze',
-        },
-    });
+    const botId = '7347935645614063618'; // Thay YOUR_BOT_ID bằng Bot ID của bạn
 
     function sendMessage() {
-        var messageInput = document.getElementById('messageInput');
-        var message = messageInput.value.trim();
+        const messageInput = document.getElementById('messageInput');
+        const message = messageInput.value.trim();
         if (message !== '') {
-            appendMessage('sender', message);
-            // Simulate receiving a response after a short delay
-            setTimeout(function() {
-                autoReply(message);
-            }, 1000);
+            appendMessage('You', message);
+            // Gửi tin nhắn đến bot Coze
+            fetchMessage(message);
             messageInput.value = '';
         }
     }
 
-    function autoReply(message) {
-        // Simulate auto-reply message from Coze bot
-        var replyMessage = 'This is an auto-reply from Coze bot. You said: ' + message;
-        appendMessage('receiver', replyMessage);
-    }
-
     function appendMessage(sender, message) {
-        var chatMessages = document.getElementById('chatMessages');
-        var messageDiv = document.createElement('div');
+        const chatMessages = document.getElementById('chatMessages');
+        const messageDiv = document.createElement('div');
         messageDiv.textContent = message;
-        messageDiv.classList.add('message', sender);
+        messageDiv.classList.add('message', sender.toLowerCase());
         chatMessages.appendChild(messageDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function fetchMessage(message) {
+        // Gửi yêu cầu POST đến API của Coze để nhận câu trả lời từ bot
+        fetch('https://api.coze.com/open_api/v2/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer pat_gtTRRGJtY5kM8r94CvIm9dAMpMc3sKqVS1ql1Cbm3YTMflRH0ZrA7DEEQRACKMr1' // Thay YOUR_PERSONAL_ACCESS_TOKEN bằng mã truy cập cá nhân của bạn
+            },
+            body: JSON.stringify({
+                bot_id: botId,
+                query: message,
+                stream: true
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const botMessage = data.message.content;
+            appendMessage('Bot', botMessage);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     }
 </script>
 </body>
