@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hỏi đáp Trợ lý ảo</title>
+    <title>Hỏi đáp chatbot</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -94,19 +94,17 @@
                         },
                         body: JSON.stringify({
                             bot_id: BOT_ID,
-                            query: message,
-                            stream: false // changed to false for non-streaming responses
+                            query: message
                         })
                     });
 
                     if (response.ok) {
                         const data = await response.json();
-                        console.log('Received response:', data); // Add this line for debugging
-                        if (data.message) {
+                        if (data.message && data.message.content) {
                             const botMessage = data.message.content;
                             addMessage(botMessage, 'bot-message');
                         } else {
-                            addMessage('Không nhận được phản hồi hợp lệ từ bot.', 'bot-message');
+                            throw new Error('Không có tin nhắn trả về từ chatbot');
                         }
                     } else {
                         throw new Error('Lỗi khi gửi yêu cầu: ' + response.statusText);
