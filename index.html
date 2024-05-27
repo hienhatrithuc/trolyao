@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Khung Chat với Chatbot Coze</title>
+    <title>Hỏi đáp Trợ lý ảo</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -95,15 +95,18 @@
                         body: JSON.stringify({
                             bot_id: BOT_ID,
                             query: message,
-                            stream: true
+                            stream: false // changed to false for non-streaming responses
                         })
                     });
 
                     if (response.ok) {
                         const data = await response.json();
-                        if (data.event === 'message' && data.message.role === 'assistant') {
+                        console.log('Received response:', data); // Add this line for debugging
+                        if (data.message) {
                             const botMessage = data.message.content;
                             addMessage(botMessage, 'bot-message');
+                        } else {
+                            addMessage('Không nhận được phản hồi hợp lệ từ bot.', 'bot-message');
                         }
                     } else {
                         throw new Error('Lỗi khi gửi yêu cầu: ' + response.statusText);
