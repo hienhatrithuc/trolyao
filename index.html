@@ -75,7 +75,7 @@
 
     <script>
         const ACCESS_TOKEN = 'pat_4RRRsN1HkKSj3ciVTrqzzO8BRltdaeFlMQCA8cFqt2HYMMZ3q0DbhyxIYmqe6Zzm';
-        const BOT_ID = '7347935645614063618'; // Thay thế 'your_bot_id' bằng ID bot của bạn
+        const BOT_ID = '7347935645614063618';
         const USER_ID = '29032201862555';
         const CONVERSATION_ID = '123';
 
@@ -121,12 +121,19 @@
                         const chunk = decoder.decode(value, { stream: true });
                         
                         try {
-                            const data = JSON.parse(chunk);
-                            if (data.event === 'message' && data.message.role === 'assistant') {
-                                botMessage += data.message.content;
-                                addMessage(botMessage, 'bot-message');
-                            } else if (data.event === 'done') {
-                                break;
+                            // Kiểm tra xem chunk có phải là chuỗi JSON không
+                            if (chunk.startsWith("data:")) {
+                                // Nếu chuỗi bắt đầu bằng "data:", loại bỏ phần đầu tiên trước khi phân tích JSON
+                                const jsonData = chunk.substring("data:".length);
+                                const data = JSON.parse(jsonData);
+                                if (data.event === 'message' && data.message.role === 'assistant') {
+                                    botMessage += data.message.content;
+                                    addMessage(botMessage, 'bot-message');
+                                } else if (data.event === 'done') {
+                                    break;
+                                }
+                            } else {
+                                console.error('Lỗi phân tích cú pháp JSON: Chuỗi không bắt đầu bằng "data:"');
                             }
                         } catch (error) {
                             console.error('Lỗi phân tích cú pháp JSON:', error);
