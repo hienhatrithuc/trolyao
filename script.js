@@ -1,7 +1,7 @@
 function getBotResponse(userInput) {
     var data = {
         "conversation_id": "123",
-        "bot_id": "7348640557197246482",
+        "bot_id": "7347935645614063618",
         "user": "29032201862555",
         "query": userInput,
         "stream": true
@@ -10,7 +10,7 @@ function getBotResponse(userInput) {
     fetch('https://api.coze.com/open_api/v2/chat', {
         method: 'POST',
         headers: {
-            'Authorization': 'Bearer {YOUR PERSONAL_ACCESS_TOKEN}',
+            'Authorization': 'Bearer pat_4RRRsN1HkKSj3ciVTrqzzO8BRltdaeFlMQCA8cFqt2HYMMZ3q0DbhyxIYmqe6Zzm',
             'Content-Type': 'application/json',
             'Accept': '*/*',
             'Host': 'api.coze.com',
